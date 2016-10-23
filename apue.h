@@ -27,6 +27,7 @@
 //long	 open_max(void);				/* {Prog openmax} */
 void	 clr_fl(int, int);				/* {Prog setfl} */
 void	 set_fl(int, int);				/* {Prog setfl} */
+int      set_cloexec(int);
 //void	 pr_exit(int);					/* {Prog prexit} */
 //void	 pr_mask(const char *);			/* {Prog prmask} */
 //Sigfunc	*signal_intr(int, Sigfunc *);	/* {Prog signal_intr_function} */

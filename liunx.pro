@@ -27,11 +27,17 @@ SOURCES += main.c \
     16-9.c \
     16-16.c \
     16-11.c \
-    16-12.c
+    16-12.c \
+    16-17.c
 
 
 HEADERS += \
     apue.h
 
 DISTFILES +=
+
+
+QMAKE_CXXFLAGS += -Wno-unused-parameter
+
+QMAKE_CXXFLAGS += -Wno-unused-variable
 
