@@ -23,39 +23,46 @@ extern void daemonize(const char *);
 
 
 
-void serve(int sockfd)
+void serve1(int sockfd)
 {
-    int clfd;
-    FILE *fp;
-    char buf[BUFLEN];
+   int clfd,status;
+   pid_t pid;
+   set_cloexec(sockfd);
+   for(;;)
+   {
+       if((clfd=accept(sockfd,NULL,NULL))<0)
+       {
+           syslog(LOG_ERR,"ruptime : accept error: %s",strerror(errno));
+           exit(1);
+       }
 
-    set_cloexec(sockfd);
+       if((pid=fork())<0)
+       {
+           syslog(LOG_ERR,"ruptime :fork() error: %s",strerror(errno));
+           exit(1);
+       }
+       else if(pid==0)
+       {
+           if(dup2(clfd,STDOUT_FILENO)!=STDOUT_FILENO||dup2(clfd,STDERR_FILENO)!=STDERR_FILENO)
+           {
+               syslog(LOG_ERR,"tuptime dup2 error :%s",strerror(errno));
+               exit(1);
+           }
+           close(clfd);
+           execl("/usr/bin/uptime","uptime",NULL);
+           syslog(LOG_ERR,"ruptime : unexpected return from exec: %s ",strerror(errno));
 
-    for(;;)
-    {
-        if((clfd=accept(sockfd,NULL,NULL))<0)
-        {
-            syslog(LOG_ERR,"ruptime : accept error: %s",strerror(errno));
-            exit(1);
-        }
-        set_cloexec(clfd);
-        if((fp=popen("/usr/bin/uptime","r"))==NULL)
-        {
-            sprintf(buf,"error : %s\n",strerror(errno));
-            send(clfd,buf,strlen(buf),0);
-        }
-        else
-        {
-            while(fgets(buf,BUFLEN,fp)!=NULL)
-                send(clfd,buf,strlen(buf),0);
-            pclose(fp);
-        }
-        close(clfd);
-    }
+       }
+       else
+       {
+           close(clfd);
+           waitpid(pid,&status,0);
+       }
+   }
 
 }
 
-int main1617(int argc,int *argv[])
+int main1618(int argc,int *argv[])
 {
     struct addrinfo *ailist,*aip;
     struct addrinfo hint;
@@ -88,7 +95,7 @@ int main1617(int argc,int *argv[])
     {
         if((sockfd=initserver(SOCK_STREAM,aip->ai_addr,aip->ai_addrlen,QLEN)))
         {
-            serve(sockfd);
+            serve1(sockfd);
             exit(0);
         }
     }
