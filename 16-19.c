@@ -34,7 +34,7 @@ static void print_uptime(int sockfd,struct addrinfo *aip)
     write(STDOUT_FILENO,buf,n);
 }
 
-int main(int argc,char *argv[])
+int main1619(int argc,char *argv[])
 {
     struct addrinfo *ailist,*aip;
     struct addrinfo hint;
@@ -62,8 +62,6 @@ int main(int argc,char *argv[])
 
     for(aip=ailist;aip!=NULL;aip=aip->ai_next)
     {
-        print_family(aip);
-        fflush(stdout);
         if((sockfd=socket(aip->ai_family,SOCK_DGRAM,0))<0)
             err=errno;
         else

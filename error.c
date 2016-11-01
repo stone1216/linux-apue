@@ -88,7 +88,7 @@ err_quit(const char *fmt, ...)
 {
 	va_list		ap;
 
-	va_start(ap, fmt);
+    va_start(ap, fmt);
 	err_doit(0, 0, fmt, ap);
 	va_end(ap);
 	exit(1);

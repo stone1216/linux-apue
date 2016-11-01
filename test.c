@@ -4,25 +4,27 @@
 #include <string.h>
 #include<sys/wait.h>
 #include"apue.h"
-int maintest(){
+#include<unistd.h>
+#include<fcntl.h>
+#define BUFLEN 4
+int main(){
 
-//    pid_t pid;
-//    if((pid=fork())<0)
-//        err_sys("fork error");
-//    else if(pid==0)
-//    {
-//        chdir("/etc");
-//        if(execl("/bin/ls","ls","-l",NULL))
-//            err_sys("execl error");
-//    }
+    int n;
+    char buf[BUFLEN];
 
+    //int fd0=open("./test0.txt",O_RDWR);
+    //int fd=open("./test.txt",O_RDWR|O_CREAT|O_TRUNC,S_IRWXU);
+    while((n=read(STDIN_FILENO,buf,BUFLEN))>0)
+    {
+        printf("\nread %d\n",n);
+        if(write(STDOUT_FILENO,buf,n)!=n)
+            err_sys("write error");
+    }
 
-//    if(waitpid(pid,NULL,0)<0)
-//        err_sys("wait error");
+    if(n<0)
+        err_sys("read error");
 
-    char *ptr;
-    ptr=getenv("PAGER");
-    printf("%s\n",ptr);
+    exit(0);
 
     return 0;
 }
